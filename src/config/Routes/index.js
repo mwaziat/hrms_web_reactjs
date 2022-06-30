@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
-import { Dashboard, Login, Register } from './routes'
+import { Dashboard, Login, Register, Home } from './routes'
 
 export const Router = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -26,6 +26,7 @@ export const Router = () => {
                 }
               />
               <Route path='/register' element={<Register setIsLoggedIn={setIsLoggedIn} checkLogin={checkLogin} /> } />
+              <Route path='/' element={<Home setIsLoggedIn={setIsLoggedIn} checkLogin={checkLogin}/>}></Route>
             </>
             )
           : (
