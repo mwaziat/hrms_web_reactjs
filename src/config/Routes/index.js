@@ -26,7 +26,7 @@ export const Router = () => {
                 }
               />
               <Route path='/register' element={<Register setIsLoggedIn={setIsLoggedIn} checkLogin={checkLogin} /> } />
-              <Route path='/' element={<Home setIsLoggedIn={setIsLoggedIn} checkLogin={checkLogin}/>}></Route>
+              <Route path='/' element={<Home setIsLoggedIn={setIsLoggedIn} checkLogin={checkLogin}/>} />
             </>
             )
           : (
