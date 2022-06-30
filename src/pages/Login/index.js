@@ -41,7 +41,7 @@ const theme = createTheme();
 
 interface LoginPage extends Router {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
-  checkLogin: () => void,
+  checkLogin: () => void
 }
 
 export default function SignIn({ setIsLoggedIn, checkLogin }: LoginPage) {
@@ -51,11 +51,11 @@ export default function SignIn({ setIsLoggedIn, checkLogin }: LoginPage) {
 
     console.log({
       email: dataLogin.get("email"),
-      password: dataLogin.get("password"),
+      password: dataLogin.get("password")
     });
     const client = new ApolloClient({
-      uri: liveApi,
-      cache: new InMemoryCache(),
+      uri: liveApi(),
+      cache: new InMemoryCache()
     });
 
     const query = gql`
@@ -70,7 +70,7 @@ export default function SignIn({ setIsLoggedIn, checkLogin }: LoginPage) {
     `;
     client
       .mutate({
-        mutation: query,
+        mutation: query
       })
       .then(result => {
         localStorage.setItem("jwt", result.data.auth.login.token);
@@ -87,7 +87,7 @@ export default function SignIn({ setIsLoggedIn, checkLogin }: LoginPage) {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>

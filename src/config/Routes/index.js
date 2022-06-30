@@ -36,7 +36,7 @@ export const Router = () => {
                 <Navigate to='/dashboard' replace checkLogin={checkLogin} />
                 }
               />
-              <Route path='/dashboard' element={<Dashboard checkLogin={checkLogin} /> } />
+            <Route path='/dashboard' element={<Dashboard checkLogin={checkLogin} /> } />
             </>
             )
           }

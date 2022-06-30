@@ -13,9 +13,12 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
+import { Navigate } from "react-router-dom";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 import { Router } from "./../../config/Routes/index";
 import { liveApi } from "../../utils/env";
+
+import SweetAlert2 from "react-sweetalert2";
 
 function Copyright(props) {
   return (
@@ -39,21 +42,19 @@ const theme = createTheme();
 
 interface LoginPage extends Router {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>,
-  checkLogin: () => void,
+  checkLogin: () => void
 }
 
 export default function SignUp({ setIsLoggedIn, checkLogin }: LoginPage) {
+  const [swalProps, setSwalProps] = React.useState({});
+
   const handleSubmit = event => {
     event.preventDefault();
     const dataReg = new FormData(event.currentTarget);
-    console.log({
-      email: dataReg.get("email"),
-      password: dataReg.get("password"),
-    });
 
     const client = new ApolloClient({
       uri: liveApi,
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache()
     });
 
     const query = gql`
@@ -72,16 +73,33 @@ export default function SignUp({ setIsLoggedIn, checkLogin }: LoginPage) {
     `;
     client
       .mutate({
-        mutation: query,
+        mutation: query
       })
       .then(result => {
-        localStorage.setItem("jwt", result.data.auth.login.token);
+        setSwalProps({
+          show: true,
+          title: "Success",
+          text: "Success Created Accound",
+          icon: "success",
+          onConfirm: () => {
+            <Navigate to="/login" replace={true} />;
+          }
+        });
         checkLogin();
+      })
+      .catch(error => {
+        setSwalProps({
+          show: true,
+          title: "Error",
+          icon: "error",
+          text: error
+        });
       });
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <SweetAlert2 {...swalProps} />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -89,7 +107,7 @@ export default function SignUp({ setIsLoggedIn, checkLogin }: LoginPage) {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -176,7 +194,7 @@ export default function SignUp({ setIsLoggedIn, checkLogin }: LoginPage) {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
