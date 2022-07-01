@@ -31,8 +31,13 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import { DataGrid } from "@mui/x-data-grid";
 import SweetAlert2 from "react-sweetalert2";
-import { ApolloClient, InMemoryCache, gql, createHttpLink } from "@apollo/client";
-import { setContext } from '@apollo/client/link/context';
+import {
+  ApolloClient,
+  InMemoryCache,
+  gql,
+  createHttpLink
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import { liveApi } from "../../utils/env";
 
 const style = {
@@ -124,9 +129,9 @@ class Dahsboard extends Component {
       resultData: [],
       dataRows: [],
       dataEdit: {
-        firstName: '',
+        firstName: ""
       },
-      formValue: {},
+      formValue: {}
     };
   }
 
@@ -140,15 +145,15 @@ class Dahsboard extends Component {
     });
   };
 
-  handleChange = (e, valuename) => {    
-    this.setState((prevState) => ({
+  handleChange = (e, valuename) => {
+    this.setState(prevState => ({
       ...prevState,
       formValue: {
         ...prevState.formValue,
-        [valuename]: e,
-      },
+        [valuename]: e
+      }
     }));
-  }
+  };
 
   TogleModal = (state, action, index) => {
     if (state === "add") {
@@ -159,37 +164,71 @@ class Dahsboard extends Component {
       this.setState({
         openModalEdit: action === "0" ? false : true,
         dataEdit: {
-          _id: index === "" ? "" : this.state.resultData[index]._id === undefined ? "" : this.state.resultData[index]._id,
-          firstName: index === "" ? "" : this.state.resultData[index].firstName === undefined ? "" : this.state.resultData[index].firstName,
-          lastName: index === "" ? "" : this.state.resultData[index].lastName === undefined ? "" : this.state.resultData[index].lastName,
-          email: index === "" ? "" : this.state.resultData[index].email === undefined ? "" : this.state.resultData[index].email,
-          address: index === "" ? "" : this.state.resultData[index].address === undefined ? "" : this.state.resultData[index].address,
-          position: index === "" ? "" : this.state.resultData[index].position === undefined ? "" : this.state.resultData[index].position,
+          _id:
+            index === ""
+              ? ""
+              : this.state.resultData[index]._id === undefined
+              ? ""
+              : this.state.resultData[index]._id,
+          firstName:
+            index === ""
+              ? ""
+              : this.state.resultData[index].firstName === undefined
+              ? ""
+              : this.state.resultData[index].firstName,
+          lastName:
+            index === ""
+              ? ""
+              : this.state.resultData[index].lastName === undefined
+              ? ""
+              : this.state.resultData[index].lastName,
+          email:
+            index === ""
+              ? ""
+              : this.state.resultData[index].email === undefined
+              ? ""
+              : this.state.resultData[index].email,
+          address:
+            index === ""
+              ? ""
+              : this.state.resultData[index].address === undefined
+              ? ""
+              : this.state.resultData[index].address,
+          position:
+            index === ""
+              ? ""
+              : this.state.resultData[index].position === undefined
+              ? ""
+              : this.state.resultData[index].position
         }
       });
     } else {
       this.setState({
-        swalProps:{
+        swalProps: {
           show: true,
-          title: 'Warning',
+          title: "Warning",
           icon: "warning",
-          text: 'Sure you want to delete it',
+          text: "Sure you want to delete it",
           showCancelButton: true,
-          didOpen: () => {
-          },
+          didOpen: () => {},
           didClose: () => {
-              this.setState({
-                swalProps: {}
-              })
+            this.setState({
+              swalProps: {}
+            });
           },
           onConfirm: () => {
-            console.log("onConfirm")
-            this.handleDelete(index === "" ? "" : this.state.resultData[index]._id === undefined ? "" : this.state.resultData[index]._id)
+            console.log("onConfirm");
+            this.handleDelete(
+              index === ""
+                ? ""
+                : this.state.resultData[index]._id === undefined
+                ? ""
+                : this.state.resultData[index]._id
+            );
           }
         }
-      })
+      });
     }
-
   };
 
   columns = [
@@ -228,7 +267,7 @@ class Dahsboard extends Component {
       renderCell: params => {
         // const onClick = (e, event) => {
         //   e.stopPropagation(); // don't select this row after clicking
-         
+
         //   const api: GridApi = params.api;
         //   const thisRow: Record<string, GridCellValue> = {};
 
@@ -243,104 +282,114 @@ class Dahsboard extends Component {
         //   // return alert(JSON.stringify(thisRow, null, 4));
         // };
 
-        return( 
+        return (
           <>
-          <Button color="info" onClick={e => this.TogleModal("edit", "1", params.id)}>Edit</Button>
-          <Button color="error" onClick={e =>  this.TogleModal("delete", "1", params.id)}>Delete</Button>
+            <Button
+              color="info"
+              onClick={e => this.TogleModal("edit", "1", params.id)}
+            >
+              Edit
+            </Button>
+            <Button
+              color="error"
+              onClick={e => this.TogleModal("delete", "1", params.id)}
+            >
+              Delete
+            </Button>
           </>
         );
       }
     }
   ];
-  
 
   // Handle Function Submit Add
   handleSubmit = event => {
-    event.preventDefault()
-    const dataAddEmployee = new FormData(event.currentTarget)
-  
+    event.preventDefault();
+    const dataAddEmployee = new FormData(event.currentTarget);
+
     const authLink = setContext((_, { headers }) => {
-      const token = localStorage.getItem('jwt');
+      const token = localStorage.getItem("jwt");
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : "",
+          authorization: token ? `Bearer ${token}` : ""
         }
-      }
+      };
     });
 
     const httpLink = createHttpLink({
-      uri: liveApi(),
+      uri: liveApi()
     });
 
     const client = new ApolloClient({
-      credentials: 'same-origin',
+      credentials: "same-origin",
       link: authLink.concat(httpLink),
       cache: new InMemoryCache()
-    })
+    });
     const query = gql`mutation createEmployee {
       createEmployee(input: 
       {
-        firstName: "${dataAddEmployee.get('firstName')}", 
-        lastName:"${dataAddEmployee.get('lastName')}", 
-        email:"${dataAddEmployee.get('email')}", 
-        address:"${dataAddEmployee.get('address')}", 
-        position:"${dataAddEmployee.get('position')}"
+        firstName: "${dataAddEmployee.get("firstName")}", 
+        lastName:"${dataAddEmployee.get("lastName")}", 
+        email:"${dataAddEmployee.get("email")}", 
+        address:"${dataAddEmployee.get("address")}", 
+        position:"${dataAddEmployee.get("position")}"
       }) {
         email
         firstName
       }
     }
-    `
-    
+    `;
+
     client
       .mutate({
         mutation: query
       })
       .then(result => {
-        this.TogleModal("add", "0", "")
-        this.setState({
-          swalProps:{
-            show: true,
-            title: 'Succes',
-            icon: "success",
-            text: 'Your Work Saved'
-          }
-        })
-      })
-      .catch(error => {
-        console.error(error)
+        this.TogleModal("add", "0", "");
+        this.getDataEmpolyee();
         this.setState({
           swalProps: {
             show: true,
-            title: 'Error',
+            title: "Succes",
+            icon: "success",
+            text: "Your Work Saved"
+          }
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({
+          swalProps: {
+            show: true,
+            title: "Error",
             icon: "error",
             text: error
           }
-        })
-      })
-  }
+        });
+      });
+  };
 
   // Handle function Get All
   getDataEmpolyee = () => {
     const authLink = setContext((_, { headers }) => {
       // get the authentication token from local storage if it exists
-      const token = localStorage.getItem('jwt');
+      const token = localStorage.getItem("jwt");
       // return the headers to the context so httpLink can read them
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : "",
+          authorization: token ? `Bearer ${token}` : ""
         }
-      }
+      };
     });
 
     const httpLink = createHttpLink({
-      uri: liveApi(),
+      uri: liveApi()
     });
 
     const client = new ApolloClient({
-      credentials: 'same-origin',
+      credentials: "same-origin",
       link: authLink.concat(httpLink),
       cache: new InMemoryCache()
     });
@@ -356,119 +405,168 @@ class Dahsboard extends Component {
           position
         }
       }
-    `
+    `;
     client
       .query({
         query: query
       })
       .then(result => {
-        const data = result.data.employees
-        var i = 0
-        var dataEmp = []
+        const data = result.data.employees;
+        var i = 0;
+        var dataEmp = [];
         data.forEach(item => {
-          console.log(item._id)
+          console.log(item._id);
           dataEmp.push({
             id: i++,
             lastName: item.lastName,
-            firstName:  item.firstName,
+            firstName: item.firstName,
             email: item.email,
             position: item.position,
             address: item.address
-          }
-          )
-        })
+          });
+        });
         this.setState({
           resultData: data,
-          dataRows : dataEmp
-        })
+          dataRows: dataEmp
+        });
       })
       .catch(error => {
         this.setState({
           swalProps: {
             show: true,
-            title: 'Error',
+            title: "Error",
             icon: "error",
             text: error
           }
-        })
-      })
-  }
+        });
+      });
+  };
 
   // Handle function Submit Edit
-  handleSubmitEdit = (event) => {
-    event.preventDefault()
-    const dataAddEmployee = new FormData(event.currentTarget)
-    console.log(dataAddEmployee)
+  handleSubmitEdit = event => {
+    event.preventDefault();
+    const dataAddEmployee = new FormData(event.currentTarget);
     const authLink = setContext((_, { headers }) => {
       // get the authentication token from local storage if it exists
-      const token = localStorage.getItem('jwt');
+      const token = localStorage.getItem("jwt");
       // return the headers to the context so httpLink can read them
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : "",
+          authorization: token ? `Bearer ${token}` : ""
         }
-      }
+      };
     });
 
     const httpLink = createHttpLink({
-      uri: liveApi(),
+      uri: liveApi()
     });
 
     const client = new ApolloClient({
-      credentials: 'same-origin',
+      credentials: "same-origin",
       link: authLink.concat(httpLink),
       cache: new InMemoryCache()
-    })
+    });
     const query = gql`mutation updateEmployee{
       updateEmployee(_id:  "${this.state.dataEdit._id}", 
         input: {
-          firstName: "${dataAddEmployee.get('firstNameEdit')}", 
-          lastName:"${dataAddEmployee.get('lastNameEdit')}", 
-          email:"${dataAddEmployee.get('emailEdit')}", 
-          address:"${dataAddEmployee.get('addressEdit')}", 
-          position:"${dataAddEmployee.get('positionEdit')}"
+          firstName: "${dataAddEmployee.get("firstNameEdit")}", 
+          lastName:"${dataAddEmployee.get("lastNameEdit")}", 
+          email:"${dataAddEmployee.get("emailEdit")}", 
+          address:"${dataAddEmployee.get("addressEdit")}", 
+          position:"${dataAddEmployee.get("positionEdit")}"
         }){
         _id
         firstName
         lastName
       }
     }
-    `
+    `;
     client
-    .mutate({
-      mutation: query
-    })
-    .then(result => {
-      this.TogleModal("edit", "0", "")
-      this.getDataEmpolyee();
-      this.setState({
-        swalProps:{
-          show: true,
-          title: 'Succes',
-          icon: "success",
-          text: 'Your Work Saved'
-        }
+      .mutate({
+        mutation: query
       })
-    })
-    .catch(error => {
-      console.error(error)
-      this.setState({
-        swalProps: {
-          show: true,
-          title: 'Error',
-          icon: "error",
-          text: error
-        }
+      .then(result => {
+        this.TogleModal("edit", "0", "");
+        this.getDataEmpolyee();
+        this.setState({
+          swalProps: {
+            show: true,
+            title: "Succes",
+            icon: "success",
+            text: "Your Work Saved"
+          }
+        });
       })
-    })
-  }
+      .catch(error => {
+        console.error(error);
+        this.setState({
+          swalProps: {
+            show: true,
+            title: "Error",
+            icon: "error",
+            text: error
+          }
+        });
+      });
+  };
 
-  handleDelete = (id) => {
-    if(id !== ""){
-      console.log(id)
+  handleDelete = id => {
+    if (id !== "") {
+      const authLink = setContext((_, { headers }) => {
+        const token = localStorage.getItem("jwt");
+        return {
+          headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : ""
+          }
+        };
+      });
+
+      const httpLink = createHttpLink({
+        uri: liveApi()
+      });
+
+      const client = new ApolloClient({
+        credentials: "same-origin",
+        link: authLink.concat(httpLink),
+        cache: new InMemoryCache()
+      });
+      const query = gql`
+        mutation deleteEmpl {
+          deleteEmployee(_id: id)
+        }
+      `;
+
+      client
+        .mutate({
+          mutation: query
+        })
+        .then(result => {
+          this.TogleModal("add", "0", "");
+          this.getDataEmpolyee();
+          this.setState({
+            swalProps: {
+              show: true,
+              title: "Succes",
+              icon: "success",
+              text: "Your Work Saved"
+            }
+          });
+        })
+        .catch(error => {
+          console.error(error);
+          this.setState({
+            swalProps: {
+              show: true,
+              title: "Error",
+              icon: "error",
+              text: error
+            }
+          });
+        });
     }
-  }
+  };
 
   render() {
     return (
@@ -642,97 +740,120 @@ class Dahsboard extends Component {
                     </Fade>
                   </Modal>
 
-                  <Modal open={this.state.openModalEdit} onClose={e => this.TogleModal("edit", "0", "")}>
+                  <Modal
+                    open={this.state.openModalEdit}
+                    onClose={e => this.TogleModal("edit", "0", "")}
+                  >
                     <Fade in={this.state.openModalEdit}>
                       <Box
                         sx={style}
-                        component='form'
+                        component="form"
                         onSubmit={this.handleSubmitEdit}
                         noValidate
                       >
                         <Typography
-                          id='transition-modal-title'
-                          variant='h6'
-                          component='h2'
+                          id="transition-modal-title"
+                          variant="h6"
+                          component="h2"
                         >
                           Edit Employee
                         </Typography>
                         <TextField
-                          margin='normal'
+                          margin="normal"
                           required
                           fullWidth
-                          name='firstNameEdit'
-                          label='First Name'
-                          type='text'
-                          id='firstNameEdit'
-                          value={this.state.formValue.firstNameEdit ? this.state.formValue.firstNameEdit : this.state.dataEdit.firstName}
-                          onChange={(e) =>
+                          name="firstNameEdit"
+                          label="First Name"
+                          type="text"
+                          id="firstNameEdit"
+                          value={
+                            this.state.formValue.firstNameEdit
+                              ? this.state.formValue.firstNameEdit
+                              : this.state.dataEdit.firstName
+                          }
+                          onChange={e =>
                             this.handleChange(e.target.value, e.target.name)
                           }
                         />
                         <TextField
-                          margin='normal'
+                          margin="normal"
                           required
                           fullWidth
-                          name='lastNameEdit'
-                          label='Last Name'
-                          type='text'
-                          id='lastNameEdit'
-                          value={this.state.formValue.lastNameEdit ? this.state.formValue.lastNameEdit : this.state.dataEdit.lastName}
-                          onChange={(e) =>
+                          name="lastNameEdit"
+                          label="Last Name"
+                          type="text"
+                          id="lastNameEdit"
+                          value={
+                            this.state.formValue.lastNameEdit
+                              ? this.state.formValue.lastNameEdit
+                              : this.state.dataEdit.lastName
+                          }
+                          onChange={e =>
                             this.handleChange(e.target.value, e.target.name)
                           }
                         />
                         <TextField
-                          margin='normal'
+                          margin="normal"
                           required
                           fullWidth
-                          name='emailEdit'
-                          label='Email'
-                          type='text'
-                          id='emailEdit'
-                          value={this.state.formValue.emailEdit ? this.state.formValue.emailEdit : this.state.dataEdit.email}
-                          onChange={(e) =>
+                          name="emailEdit"
+                          label="Email"
+                          type="text"
+                          id="emailEdit"
+                          value={
+                            this.state.formValue.emailEdit
+                              ? this.state.formValue.emailEdit
+                              : this.state.dataEdit.email
+                          }
+                          onChange={e =>
                             this.handleChange(e.target.value, e.target.name)
                           }
                         />
                         <TextField
-                          margin='normal'
+                          margin="normal"
                           required
                           fullWidth
-                          name='addressEdit'
-                          label='Addres'
-                          type='text'
-                          id='addressEdit'
-                          value={this.state.formValue.addressEdit ? this.state.formValue.addressEdit : this.state.dataEdit.address}
-                          onChange={(e) =>
+                          name="addressEdit"
+                          label="Addres"
+                          type="text"
+                          id="addressEdit"
+                          value={
+                            this.state.formValue.addressEdit
+                              ? this.state.formValue.addressEdit
+                              : this.state.dataEdit.address
+                          }
+                          onChange={e =>
                             this.handleChange(e.target.value, e.target.name)
                           }
                         />
                         <TextField
-                          margin='normal'
+                          margin="normal"
                           required
                           fullWidth
-                          name='positionEdit'
-                          label='Department'
-                          type='text'
-                          id='positionEdit'
-                          value={this.state.formValue.positionEdit ? this.state.formValue.positionEdit : this.state.dataEdit.position}
-                          onChange={(e) =>
+                          name="positionEdit"
+                          label="Department"
+                          type="text"
+                          id="positionEdit"
+                          value={
+                            this.state.formValue.positionEdit
+                              ? this.state.formValue.positionEdit
+                              : this.state.dataEdit.position
+                          }
+                          onChange={e =>
                             this.handleChange(e.target.value, e.target.name)
                           }
                         />
-                        <Stack spacing={2} direction='row'>
+                        <Stack spacing={2} direction="row">
                           <Button
-                            type='submit'
-                            variant='contained'
+                            type="submit"
+                            variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                           >
                             Save Data
                           </Button>
                           <Button
                             onClick={e => this.TogleModal("edit", "0", "")}
-                            variant='text'
+                            variant="text"
                             sx={{ mt: 3, mb: 2 }}
                           >
                             Close

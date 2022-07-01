@@ -82,7 +82,7 @@ export default function SignUp({ setIsLoggedIn, checkLogin }: LoginPage) {
           text: "Success Created Accound",
           icon: "success",
           onConfirm: () => {
-            <Navigate to="/login" replace={true} />;
+            return <Navigate to="/login" replace={true} />;
           }
         });
         checkLogin();
