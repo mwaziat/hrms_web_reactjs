@@ -534,7 +534,7 @@ class Dahsboard extends Component {
       });
       const query = gql`
         mutation deleteEmpl {
-          deleteEmployee(_id: id)
+          deleteEmployee(_id: "${id}")
         }
       `;
 
